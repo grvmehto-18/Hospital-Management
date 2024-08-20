@@ -1,0 +1,36 @@
+package com.admin.servlet;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.dao.SpecialistDao;
+import com.db.DBConnect;
+
+@WebServlet("/addSpecialist")
+public class AddSpecialist extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+
+	@Override
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String specName = req.getParameter("specName"); // Ensure this matches the HTML form field name
+
+		SpecialistDao dao = new SpecialistDao(DBConnect.getConn());
+		boolean f = dao.addSpecialist(specName);
+
+		HttpSession session = req.getSession();
+
+		if (f) {
+			session.setAttribute("successMsg", "Specialist Added");
+			resp.sendRedirect("admin/index.jsp");
+		} else {
+			session.setAttribute("ErrorMsg", "Something went wrong on server");
+			resp.sendRedirect("admin/index.jsp");
+		}
+	}
+}
